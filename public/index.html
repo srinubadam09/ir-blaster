@@ -97,13 +97,13 @@
 
   <script>
     function sendCommand(command) {
-      fetch('/send', {
+      fetch('/api/send', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ command })
       })
-      .then(res => res.text())
-      .then(text => {
+      .then(async res => {
+        const text = await res.text();
         const status = document.getElementById('status');
         status.innerText = text;
         status.style.opacity = 1;
