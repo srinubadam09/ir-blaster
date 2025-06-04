@@ -1,0 +1,23 @@
+name: Scheduled MQTT Commands
+
+on:
+  schedule:
+    - cron: '*/20 10-18 * * 1-6' # Every 20 mins, 10:00–18:40, Mon–Sat
+    - cron: '0 19 * * 1-6'       # 7:00 PM, Mon–Sat
+
+jobs:
+  send-mqtt:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send ON command during working hours
+        if: ${{ github.event.schedule == '*/20 10-18 * * 1-6' }}
+        run: |
+           curl -X POST https://ir-blasterr.vercel.app/api/send \
+            -H "Content-Type: application/json" \
+            -d '{"command":"on"}'
+      - name: Send OFF command at 7 PM
+        if: ${{ github.event.schedule == '0 19 * * 1-6' }}
+        run: |
+          curl -X POST https://ir-blasterr.vercel.app/api/send \
+            -H "Content-Type: application/json" \
+            -d '{"command":"off"}'
