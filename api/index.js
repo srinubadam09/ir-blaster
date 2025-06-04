@@ -72,3 +72,4 @@ cron.schedule('0 19 * * 1-6', () => {
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
 });
+module.exports = app;
