@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>IR Blaster Control</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to bottom, #1e3c72, #2a5298);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 60px;
+      min-height: 100vh;
+    }
+
+    h1 {
+      margin-bottom: 30px;
+      font-size: 2.2rem;
+      letter-spacing: 1px;
+    }
+
+    .button-stack {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      width: 90%;
+      max-width: 300px;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 20px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+    }
+
+    .btn:hover {
+      transform: scale(1.04);
+      box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn.on { background-color: #27ae60; color: white; }
+    .btn.off { background-color: #e74c3c; color: white; }
+    .btn.temp { background-color: #2980b9; color: white; }
+    .btn.holiday { background-color: #f39c12; color: white; }
+
+    #status {
+      margin-top: 30px;
+      font-size: 1rem;
+      padding: 12px 20px;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      min-height: 24px;
+      text-align: center;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <h1>IR Blaster Control</h1>
+
+  <div class="button-stack">
+    <button class="btn on" onclick="sendCommand('on')">Power ON</button>
+    <button class="btn off" onclick="sendCommand('off')">Power OFF</button>
+    <button class="btn temp" onclick="sendCommand('temp25')">Temp 25°</button>
+    <button class="btn temp" onclick="sendCommand('temp26')">Temp 26°</button>
+    <button class="btn temp" onclick="sendCommand('temp27')">Temp 27°</button>
+    <button class="btn holiday" onclick="sendCommand('noworkingday')">No Working Day</button>
+  </div>
+
+  <div id="status">Status will appear here...</div>
+
+  <script>
+    function sendCommand(command) {
+      fetch('/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ command })
+      })
+      .then(res => res.text())
+      .then(text => {
+        const status = document.getElementById('status');
+        status.innerText = text;
+        status.style.opacity = 1;
+      })
+      .catch(err => {
+        const status = document.getElementById('status');
+        status.innerText = "Error sending command.";
+        console.error(err);
+      });
+    }
+  </script>
+</body>
+</html>
